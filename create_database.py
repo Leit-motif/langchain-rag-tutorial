@@ -2,10 +2,10 @@
 from langchain_community.document_loaders import DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
-# from langchain.embeddings import OpenAIEmbeddings
-from langchain_openai import OpenAIEmbeddings
+# Use the official embeddings module updated for Pydantic v2:
+from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
-import openai 
+import openai
 from dotenv import load_dotenv
 import os
 import shutil
@@ -13,8 +13,7 @@ import shutil
 # Load environment variables. Assumes that project contains .env file with API keys
 load_dotenv()
 #---- Set OpenAI API key 
-# Change environment variable name from "OPENAI_API_KEY" to the name given in 
-# your .env file.
+# Change environment variable name from "OPENAI_API_KEY" to the name given in your .env file.
 openai.api_key = os.environ['OPENAI_API_KEY']
 
 CHROMA_PATH = "chroma"
@@ -63,7 +62,11 @@ def save_to_chroma(chunks: list[Document]):
     db = Chroma.from_documents(
         chunks, OpenAIEmbeddings(), persist_directory=CHROMA_PATH
     )
-    db.persist()
+    # db.persist() Chroma now auto-persists documents 
+    # so you can safely remove or comment out db.persist() 
+    # if you wish to avoid the warning. 
+    # For learning purposes, it’s okay to leave it for now 
+    # since it doesn’t break the code.
     print(f"Saved {len(chunks)} chunks to {CHROMA_PATH}.")
 
 

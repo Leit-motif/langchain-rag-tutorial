@@ -8,13 +8,21 @@ from langchain.prompts import ChatPromptTemplate
 CHROMA_PATH = "chroma"
 
 PROMPT_TEMPLATE = """
-Answer the question based only on the following context:
+You are an insightful assistant with an eye for detail and thoroughness. Please read the following context and answer the question in a 
+clear, structured, explanatory way:
 
+CONTEXT:
 {context}
 
----
+QUESTION:
+{question}
 
-Answer the question based on the above context: {question}
+REQUIREMENTS:
+- Give a concise but comprehensive answer.
+- If the context isn't certain, note any ambiguities.
+- Summarize key points in a listicle format where appropriate.
+
+Now, provide your answer:
 """
 
 
@@ -41,7 +49,7 @@ def main():
     print(prompt)
 
     model = ChatOpenAI()
-    response_text = model.predict(prompt)
+    response_text = model.invoke(prompt)
 
     sources = [doc.metadata.get("source", None) for doc, _score in results]
     formatted_response = f"Response: {response_text}\nSources: {sources}"
