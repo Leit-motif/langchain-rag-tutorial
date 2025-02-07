@@ -9,6 +9,8 @@ import openai
 from dotenv import load_dotenv
 import os
 import shutil
+import re
+from datetime import datetime
 
 # Load environment variables. Assumes that project contains .env file with API keys
 load_dotenv()
@@ -33,6 +35,18 @@ def generate_data_store():
 def load_documents():
     loader = DirectoryLoader(DATA_PATH, glob="*.md")
     documents = loader.load()
+    
+    # Enhance metadata with date information
+    for doc in documents:
+        filename = os.path.basename(doc.metadata["source"])
+        date_match = re.search(r"\d{4}-\d{2}-\d{2}", filename)
+        if date_match:
+            doc.metadata["date"] = date_match.group(0)  # String format
+            doc.metadata["year"] = date_match.group(0)[:4]
+            doc.metadata["month"] = date_match.group(0)[5:7]
+            doc.metadata["day"] = date_match.group(0)[8:10]
+            doc.metadata["datetime"] = doc.metadata["date"]  # Keep as a string
+
     return documents
 
 
