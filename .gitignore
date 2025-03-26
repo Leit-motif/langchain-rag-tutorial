@@ -1,5 +1,1 @@
-.venv
-chroma_*
-chroma
-.DS_Store
-.env
+__pycache__/

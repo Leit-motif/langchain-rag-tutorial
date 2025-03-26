@@ -36,9 +36,10 @@ def load_documents():
     loader = DirectoryLoader(DATA_PATH, glob="*.md")
     documents = loader.load()
     
-    # Enhance metadata with date information
+    # Enhance metadata with date and tag information
     for doc in documents:
         filename = os.path.basename(doc.metadata["source"])
+        # Extract date
         date_match = re.search(r"\d{4}-\d{2}-\d{2}", filename)
         if date_match:
             doc.metadata["date"] = date_match.group(0)  # String format
@@ -46,6 +47,10 @@ def load_documents():
             doc.metadata["month"] = date_match.group(0)[5:7]
             doc.metadata["day"] = date_match.group(0)[8:10]
             doc.metadata["datetime"] = doc.metadata["date"]  # Keep as a string
+        
+        # Extract tags and store as comma-separated string
+        tags = re.findall(r'\[\[(.*?)\]\]', doc.page_content)
+        doc.metadata["tags"] = ",".join([tag.strip() for tag in tags]) if tags else ""
 
     return documents
 
@@ -79,8 +84,8 @@ def save_to_chroma(chunks: list[Document]):
     # db.persist() Chroma now auto-persists documents 
     # so you can safely remove or comment out db.persist() 
     # if you wish to avoid the warning. 
-    # For learning purposes, it’s okay to leave it for now 
-    # since it doesn’t break the code.
+    # For learning purposes, it's okay to leave it for now 
+    # since it doesn't break the code.
     print(f"Saved {len(chunks)} chunks to {CHROMA_PATH}.")
 
 
